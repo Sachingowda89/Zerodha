@@ -117,7 +117,7 @@ Explore the unique features available in this application:
 
 ## 🔗 Demo & Screenshots
 
-- [Demo](https://zerodha-clone-frontend.vercel.app)
+- [Live Demo] https://zerodha-iyfl.vercel.app/
 - UserName : Demo
 - Password : Demo
 
