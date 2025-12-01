@@ -4,14 +4,14 @@ import axios from "axios";
 const Orders = () => {
   const [allOrders, SetAllOrders] = useState([]);
 
-  // GET TOKEN
-  const token = localStorage.getItem("token");
+  // CORRECT TOKEN
+  const token = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     axios
       .get("https://zerodha-prg0.onrender.com/orders/index", {
         headers: {
-          Authorization: `Bearer ${token}`,   // FIXED
+          Authorization: token,   // ✔ no Bearer, correct
         },
       })
       .then((res) => {
@@ -20,7 +20,7 @@ const Orders = () => {
       .catch((err) => {
         console.log("Orders fetch error:", err);
       });
-  }, []); // FIXED: run once
+  }, []);
 
   return (
     <>

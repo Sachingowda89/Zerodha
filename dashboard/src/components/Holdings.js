@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
 import { VerticalGraph } from "./VerticalGraph";
-import { useAuth } from "../hooks/useAuth";
 
 const Holdings = () => {
   const [allHoldings, SetAllHoldings] = useState([]);
 
-  // GET token
-  const token = localStorage.getItem("token");
+  // CORRECT TOKEN
+  const token = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     axios
       .get("https://zerodha-prg0.onrender.com/holdings/index", {
         headers: {
-          Authorization: `Bearer ${token}`,   // FIXED
+          Authorization: token,
         },
       })
       .then((res) => {
@@ -23,7 +21,7 @@ const Holdings = () => {
       .catch((err) => {
         console.log("Holdings fetch error:", err);
       });
-  }, []); // FIXED (no infinite loop)
+  }, []);
 
   const labels = allHoldings.map((stock) => stock.name);
 

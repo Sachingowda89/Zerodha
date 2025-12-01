@@ -4,14 +4,15 @@ import axios from "axios";
 
 import GeneralContext from "./GeneralContext";
 import "./BuyActionWindow.css";
-import { useAuth } from "../hooks/useAuth";
 
 const BuyActionWindow = ({ uid }) => {
   const [stockQuantity, setStockQuantity] = useState(1);
   const [stockPrice, setStockPrice] = useState(0.0);
 
-  const { user } = useAuth();  // token stored here
   const { closeBuyWindow } = useContext(GeneralContext);
+
+  // ⭐ CORRECT: Read token directly from localStorage
+  const token = JSON.parse(localStorage.getItem("user"));
 
   const handleBuyClick = () => {
     axios
@@ -25,7 +26,7 @@ const BuyActionWindow = ({ uid }) => {
         },
         {
           headers: {
-            Authorization: user,  // Correct token
+            Authorization: token, // ⭐ FIXED
             "Content-Type": "application/json",
           },
         }
