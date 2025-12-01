@@ -11,10 +11,13 @@ const BuyActionWindow = ({ uid }) => {
   const [stockPrice, setStockPrice] = useState(0.0);
   const { user } = useAuth();
 
+  // get token from localStorage
+  const token = localStorage.getItem("token");
+
   const handleBuyClick = () => {
     axios
       .post(
-        "https://zerodha-clone-backend-8nlf.onrender.com/orders/create",
+        "https://zerodha-prg0.onrender.com/orders/create",
         {
           name: uid,
           qty: stockQuantity,
@@ -23,7 +26,9 @@ const BuyActionWindow = ({ uid }) => {
         },
         {
           headers: {
-            Authorization: user,
+            // FIXED: backend expects "Bearer <token>"
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       )
@@ -31,9 +36,9 @@ const BuyActionWindow = ({ uid }) => {
         GeneralContext.closeBuyWindow();
       })
       .catch((error) => {
+        console.log(error);
         GeneralContext.closeBuyWindow();
       });
-    GeneralContext.closeBuyWindow();
   };
 
   const handleCancelClick = () => {
@@ -46,11 +51,24 @@ const BuyActionWindow = ({ uid }) => {
         <div className="inputs">
           <fieldset>
             <legend>Qty.</legend>
-            <input type="number" name="qty" id="qty" onChange={(e) => setStockQuantity(e.target.value)} value={stockQuantity} />
+            <input
+              type="number"
+              name="qty"
+              id="qty"
+              onChange={(e) => setStockQuantity(e.target.value)}
+              value={stockQuantity}
+            />
           </fieldset>
           <fieldset>
             <legend>Price</legend>
-            <input type="number" name="price" id="price" step="0.05" onChange={(e) => setStockPrice(e.target.value)} value={stockPrice} />
+            <input
+              type="number"
+              name="price"
+              id="price"
+              step="0.05"
+              onChange={(e) => setStockPrice(e.target.value)}
+              value={stockPrice}
+            />
           </fieldset>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useNavigate, Link } from "react-router-dom";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,9 +10,8 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Alert from "@mui/material/Alert";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 
 import { useAuth } from "../hooks/useAuth";
@@ -19,15 +19,13 @@ import { useAuth } from "../hooks/useAuth";
 const defaultTheme = createTheme();
 
 export default function Register() {
-  let [alert, setAlert] = React.useState({ st: false, msg: "" });
+  const [alert, setAlert] = React.useState({ st: false, msg: "" });
   const navigate = useNavigate();
   const { login, user } = useAuth();
 
   React.useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, []);
+    if (user) navigate("/");
+  }, [user, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -41,16 +39,18 @@ export default function Register() {
 
     if (!data.username || !data.email || !data.password) {
       setAlert({ st: true, msg: "Enter Valid Details" });
+      return; // FIXED
     }
 
     axios
-      .post("https://zerodha-clone-backend-8nlf.onrender.com/user/register", data, {
+      .post("https://zerodha-prg0.onrender.com/user/register", data, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then(async (res) => {
-        await login(res.data.token);
+        await login(res.data.token); // save token
+        navigate("/"); // FIXED redirect
       })
       .catch((error) => {
         if (error.response) {
@@ -67,6 +67,7 @@ export default function Register() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+
         <Box
           sx={{
             marginTop: 8,
@@ -78,25 +79,55 @@ export default function Register() {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
+
           <Typography component="h1" variant="h5">
             Register Now
           </Typography>
+
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            {alert.st == true ? <Alert severity="error">{alert.msg}</Alert> : null}
+            {alert.st && <Alert severity="error">{alert.msg}</Alert>}
+
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField autoComplete="given-name" name="Username" required fullWidth id="Username" label="Username" autoFocus />
+                <TextField
+                  autoComplete="given-name"
+                  name="Username"
+                  required
+                  fullWidth
+                  id="Username"
+                  label="Username"
+                  autoFocus
+                />
               </Grid>
+
               <Grid item xs={12}>
-                <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
               </Grid>
+
               <Grid item xs={12}>
-                <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                />
               </Grid>
             </Grid>
+
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign Up
             </Button>
+
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link to="/login" variant="body2">

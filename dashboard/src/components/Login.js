@@ -1,6 +1,7 @@
 import * as React from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,7 +19,7 @@ import { useAuth } from "../hooks/useAuth";
 const defaultTheme = createTheme();
 
 export default function Login() {
-  let [alert, setAlert] = React.useState({ st: false, msg: "" });
+  const [alert, setAlert] = React.useState({ st: false, msg: "" });
   const navigate = useNavigate();
   const { login, user } = useAuth();
 
@@ -26,23 +27,24 @@ export default function Login() {
     if (user) {
       navigate("/");
     }
-  }, []);
+  }, [user, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     const formData = new FormData(event.currentTarget);
     const data = {
       email: formData.get("email"),
       password: formData.get("password"),
     };
+
     axios
-      .post("https://zerodha-clone-backend-8nlf.onrender.com/user/login", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      .post("https://zerodha-prg0.onrender.com/user/login", data, {
+        headers: { "Content-Type": "application/json" },
       })
       .then(async (res) => {
-        await login(res.data.token);
+        await login(res.data.token);   // store token
+        navigate("/");                 // redirect after login
       })
       .catch((error) => {
         if (error.response) {
@@ -73,13 +75,36 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
+
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {alert.st == true ? <Alert severity="error">{alert.msg}</Alert> : null}
-            <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus />
-            <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" />
+            {alert.st && <Alert severity="error">{alert.msg}</Alert>}
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
+
             <Grid container>
               <Grid item>
                 <Link to="/register">{"Don't have an account? Sign Up"}</Link>
